@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>💖 A Little Question For You MY DR ...</title>
+  <meta name="description" content="A sweet, step-by-step proposal page with playful interactions and confetti." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#0b1020; --bg2:#181a2e; --card:#111528cc; --accent:#ff4d6d; --accent-2:#ffd166; --text:#e9ecf1; --muted:#a8b0c3;
+      --ok:#2ecc71; --warn:#ff9f1c; --shadow:0 20px 60px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:"Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color:var(--text); background:radial-gradient(1200px 800px at 20% 10%, #1a1f3a 0%, #0b0f1f 50%, #05060b 100%);
+      overflow-x:hidden;
+    }
+    .stars{position:fixed; inset:0; pointer-events:none; z-index:0;}
+    .container{position:relative; min-height:100%; display:grid; place-items:center; padding:32px;}
+    .card{
+      position:relative; z-index:2; width:min(820px, 92vw); padding:28px 24px; border-radius:22px;
+      background:linear-gradient(145deg, #12162a, #0c1022);
+      border:1px solid rgba(255,255,255,.06); box-shadow:var(--shadow);
+    }
+    header{display:flex; align-items:center; gap:12px; margin-bottom:14px}
+    header .heart{font-size:28px}
+    h1{font-size:28px; margin:0; letter-spacing:.2px}
+    p{margin:8px 0 0; color:var(--muted)}
+
+    .progress{height:10px; background:#1b2040; border-radius:999px; margin:18px 0 22px; overflow:hidden;}
+    .progress > span{display:block; height:100%; width:0%; background:linear-gradient(90deg, var(--accent), #ff7aa2); transition:width .35s ease}
+
+    .step{display:none;}
+    .step.active{display:block;}
+
+    .q{font-size:22px; font-weight:600; margin:6px 4px 14px}
+    .helper{color:var(--muted); font-size:14px; margin:0 4px 18px}
+
+    .field{display:flex; gap:10px; flex-wrap:wrap}
+    input[type="text"], input[type="date"], .chip-input{
+      width:100%; padding:14px 16px; background:#0e1330; color:var(--text); border:1px solid #22294f;
+      border-radius:14px; outline:none; transition:border .2s; font-size:16px;
+    }
+    input[type="text"]:focus, input[type="date"]:focus{border-color:#3a4290}
+    .chips{display:flex; flex-wrap:wrap; gap:10px}
+    .chip{padding:10px 14px; border:1px solid #27306b; background:#0e1330; color:var(--text); border-radius:999px; cursor:pointer; user-select:none; transition:.2s}
+    .chip.active{background:#1c255b; border-color:#4855b5; transform:translateY(-1px)}
+
+    .actions{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:22px}
+    .btn{
+      appearance:none; border:none; padding:12px 18px; border-radius:14px; font-size:16px; font-weight:600; cursor:pointer;
+      background:#222a58; color:#e7ebff; transition:transform .08s ease, filter .2s ease, background .2s ease; box-shadow:0 8px 18px rgba(0,0,0,.25)
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn[disabled]{opacity:.5; pointer-events:none}
+    .btn.primary{background:linear-gradient(135deg, #ff4d6d, #ff7aa2)}
+    .btn.success{background:linear-gradient(135deg, #2ecc71, #33d17a)}
+    .btn.ghost{background:transparent; border:1px solid #2b326d}
+
+    .final{
+      text-align:center; padding:20px 10px 6px
+    }
+    .big-q{font-size:30px; line-height:1.2; font-weight:700; margin:10px 0 20px}
+    .yn{display:flex; gap:14px; justify-content:center; align-items:center; position:relative; min-height:70px}
+    .yn .btn{font-size:18px; padding:14px 22px}
+    #noBtn{position:relative}
+
+    .celebrate{position:fixed; inset:0; display:none; place-items:center; z-index:5;}
+    .celebrate.show{display:grid}
+    .celebrate .panel{
+      width:min(780px,92vw); text-align:center; padding:28px 20px; border-radius:22px; background:linear-gradient(145deg,#13183e,#0e132c);
+      border:1px solid rgba(255,255,255,.08); box-shadow:var(--shadow)
+    }
+    .celebrate h2{margin:6px 0 8px; font-size:34px}
+    .celebrate p{margin:0 auto 16px; max-width:620px}
+    .celebrate .row{display:flex; gap:10px; justify-content:center; flex-wrap:wrap}
+
+    canvas#confetti{position:fixed; inset:0; z-index:4; pointer-events:none}
+
+    footer{margin-top:18px; text-align:center; color:#8e96b3; font-size:12px}
+    a{color:#ffd166}
+  </style>
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+  <canvas id="confetti"></canvas>
+
+  <div class="container">
+    <div class="card" role="dialog" aria-labelledby="title">
+      <header>
+        <div class="heart">💘</div>
+        <div>
+          <h1 id="title">A little question for you…</h1>
+          <p>Answer these tiny questions step by step — there's a surprise at the end ✨</p>
+        </div>
+      </header>
+
+      <div class="progress" aria-hidden="true"><span id="bar"></span></div>
+
+      <!-- Step 1: Name -->
+      <section class="step active" data-step="1">
+        <div class="q">What are u going to call me future ri? 😊</div>
+        <p class="helper">So I can whisper it like a secret when I think of you.</p>
+        <div class="field"><input id="name" type="text" placeholder="Type your name here…" autocomplete="name" /></div>
+        <div class="actions">
+          <button class="btn ghost" id="s1-skip" aria-label="Skip" style="visibility:hidden">Back</button>
+          <button class="btn primary" id="s1-next" disabled>Next →</button>
+        </div>
+      </section>
+
+      <!-- Step 2: Compliment -->
+      <section class="step" data-step="2">
+        <div class="q">Do you know how amazing you are?</div>
+        <p class="helper">Honesty counts… but I may protest if you say no 🙈</p>
+        <div class="field">
+          <button class="btn" id="amazing-yes">Yes, a little 😌</button>
+          <button class="btn" id="amazing-no">Hmm, not really</button>
+        </div>
+        <div class="actions">
+          <button class="btn ghost" id="s2-back">← Back</button>
+          <button class="btn primary" id="s2-next" disabled>Next →</button>
+        </div>
+      </section>
+
+      <!-- Step 3: Date idea -->
+      <section class="step" data-step="3">
+        <div class="q">Pick a day for our little adventure 🌟</div>
+        <p class="helper">Any date that makes you smile.</p>
+        <div class="field"><input id="date" type="date" /></div>
+        <div class="actions">
+          <button class="btn ghost" id="s3-back">← Back</button>
+          <button class="btn primary" id="s3-next" disabled>Next →</button>
+        </div>
+      </section>
+
+      <!-- Step 4: Activities -->
+      <section class="step" data-step="4">
+        <div class="q">What should we do together?</div>
+        <p class="helper">Pick as many as you like.</p>
+        <div class="chips" id="chips"></div>
+        <div class="actions">
+          <button class="btn ghost" id="s4-back">← Back</button>
+          <button class="btn primary" id="s4-next" disabled>Next →</button>
+        </div>
+      </section>
+
+      <!-- Step 5: Ready? -->
+      <section class="step" data-step="5">
+        <div class="q">Ready for the final (tiny) question?</div>
+        <p class="helper">It comes with sparkles ✨</p>
+        <div class="field">
+          <button class="btn success" id="ready-yes">I’m ready!</button>
+        </div>
+        <div class="actions">
+          <button class="btn ghost" id="s5-back">← Back</button>
+          <button class="btn primary" id="s5-next" disabled>Next →</button>
+        </div>
+      </section>
+
+      <!-- Step 6: Final proposal -->
+      <section class="step" data-step="6">
+        <div class="final">
+          <div class="big-q">Will you marry? 💖</div>
+          <div class="helper" id="recap"></div>
+          <div class="yn">
+            <button class="btn success" id="yesBtn">Yes!</button>
+            <button class="btn" id="noBtn" aria-label="No">No</button>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn ghost" id="s6-back">← Back</button>
+          <button class="btn primary" id="s6-next" style="visibility:hidden">Next</button>
+        </div>
+      </section>
+
+      <footer>
+        Made with 💛 by <span id="footerName">someone who thinks you’re wonderful</span>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Celebration Modal -->
+  <div class="celebrate" id="celebrate" aria-live="polite">
+    <div class="panel">
+      <h2 id="celebrateTitle">Yay! 🎉</h2>
+      <p id="celebrateMsg">I’m so happy you said yes. Let’s make our day on <b id="celebrateDate"></b> extra special.
+      <br/>I’ll bring the smiles; you bring <span id="celebrateActivities"></span> 💫</p>
+      <div class="row">
+        <a id="whatsApp" class="btn" target="_blank" rel="noopener">Share on WhatsApp</a>
+        <button class="btn ghost" id="restart">Start Over</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Utility: Tiny starfield background =====
+    (function makeStars(){
+      const wrap=document.querySelector('.stars');
+      const n=80; let html="";
+      for(let i=0;i<n;i++){
+        const size=Math.random()*2+1;
+        const x=Math.random()*100, y=Math.random()*100;
+        const dur=(Math.random()*6+4).toFixed(2);
+        html+=`<span style="position:absolute; left:${x}%; top:${y}%; width:${size}px; height:${size}px; background:#fff; border-radius:50%; filter:blur(.2px); opacity:.7; animation: twinkle ${dur}s infinite ease-in-out ${Math.random()*2}s"></span>`
+      }
+      wrap.innerHTML=html;
+      const style=document.createElement('style');
+      style.textContent=`@keyframes twinkle{0%,100%{opacity:.2; transform:scale(.8)}50%{opacity:1; transform:scale(1)}}`;
+      document.head.appendChild(style);
+    })();
+
+    // ===== State =====
+    const steps=[...document.querySelectorAll('.step')];
+    const bar=document.getElementById('bar');
+    const celebrate=document.getElementById('celebrate');
+    const confettiCanvas=document.getElementById('confetti');
+    let current=0;
+    const ans={ name:"", date:"", activities:[] };
+
+    function show(i){
+      steps.forEach((s,idx)=>s.classList.toggle('active', idx===i));
+      current=i; updateBar();
+    }
+    function updateBar(){
+      const pct=((current)/(steps.length-1))*100; bar.style.width=pct+"%";
+    }
+
+    // Step 1
+    const nameInput=document.getElementById('name');
+    nameInput.addEventListener('input', ()=>{
+      document.getElementById('s1-next').disabled = nameInput.value.trim().length<1;
+    });
+    document.getElementById('s1-next').addEventListener('click', ()=>{
+      ans.name=nameInput.value.trim();
+      document.getElementById('footerName').textContent=ans.name?`— ${ans.name}`: 'someone who thinks you\'re wonderful';
+      show(1);
+    });
+
+    // Step 2
+    const s2next=document.getElementById('s2-next');
+    document.getElementById('amazing-yes').addEventListener('click', ()=>{ s2next.disabled=false; pulseButton(event.target); });
+    document.getElementById('amazing-no').addEventListener('click', (e)=>{
+      e.target.textContent='Incorrect 😤 (you are amazing)';
+      wiggle(e.target);
+      setTimeout(()=>{s2next.disabled=false;},400);
+    });
+    document.getElementById('s2-back').addEventListener('click', ()=>show(0));
+    s2next.addEventListener('click', ()=>show(2));
+
+    // Step 3
+    const dateInput=document.getElementById('date');
+    const today=new Date();
+    const iso=today.toISOString().slice(0,10);
+    dateInput.min=iso; // no past dates by default
+    dateInput.addEventListener('input', ()=>{
+      document.getElementById('s3-next').disabled = !dateInput.value;
+    });
+    document.getElementById('s3-back').addEventListener('click', ()=>show(1));
+    document.getElementById('s3-next').addEventListener('click', ()=>{ ans.date=dateInput.value; show(3); });
+
+    // Step 4
+    const options=['Coffee date ☕','Long walk 🚶‍♂️','Movie night 🎬','Street food hunt 🍢','Board games 🎲','Stargazing ✨','Bookstore + chai 📚','Museum hop 🖼️'];
+    const chips=document.getElementById('chips');
+    options.forEach(opt=>{
+      const el=document.createElement('button'); el.type='button'; el.className='chip'; el.textContent=opt;
+      el.addEventListener('click',()=>{ el.classList.toggle('active'); checkActivities(); });
+      chips.appendChild(el);
+    });
+    function checkActivities(){
+      const selected=[...document.querySelectorAll('.chip.active')].map(c=>c.textContent);
+      ans.activities=selected; document.getElementById('s4-next').disabled = selected.length===0;
+    }
+    document.getElementById('s4-back').addEventListener('click', ()=>show(2));
+    document.getElementById('s4-next').addEventListener('click', ()=>show(4));
+
+    // Step 5
+    document.getElementById('ready-yes').addEventListener('click', ()=>{
+      document.getElementById('s5-next').disabled=false; pulseButton(event.target);
+    });
+    document.getElementById('s5-back').addEventListener('click', ()=>show(3));
+    document.getElementById('s5-next').addEventListener('click', ()=>{
+      // Fill recap
+      const niceDate = ans.date ? new Date(ans.date+ 'T00:00:00').toLocaleDateString(undefined,{year:'numeric', month:'long', day:'numeric'}) : 'a day you choose';
+      const recap = `So, ${escapeHtml(ans.name||'you')}, on <b>${niceDate}</b> we\'ll enjoy <b>${(ans.activities||[]).join(', ')}</b>.`;
+      document.getElementById('recap').innerHTML = recap;
+      show(5);
+      playfulNo();
+    });
+
+    // Step 6 — Final
+    const yesBtn=document.getElementById('yesBtn');
+    const noBtn=document.getElementById('noBtn');
+
+    yesBtn.addEventListener('click', ()=>{
+      celebrateYes();
+    });
+
+    function playfulNo(){
+      const box = document.querySelector('.yn');
+      function move(){
+        const pad=6; const bw=box.clientWidth, bh=100;
+        const x = Math.random()*(bw-100-pad*2)+pad;
+        const y = Math.random()*40; // small vertical wiggle
+        noBtn.style.position='absolute';
+        noBtn.style.left=x+'px'; noBtn.style.top=y+'px';
+      }
+      noBtn.addEventListener('mouseenter', move);
+      noBtn.addEventListener('click', move);
+      window.addEventListener('resize', move);
+    }
+
+    // Celebrate modal + confetti
+    function celebrateYes(){
+      const cName = ans.name || 'You';
+      const d = ans.date ? new Date(ans.date+ 'T00:00:00').toLocaleDateString(undefined,{year:'numeric', month:'long', day:'numeric'}) : 'someday soon';
+      const acts = (ans.activities && ans.activities.length) ? ans.activities.join(', ') : 'whatever makes us smile';
+      document.getElementById('celebrateTitle').innerHTML = `He said YES! 💞`;
+      document.getElementById('celebrateMsg').innerHTML = `I\'m so happy you said yes, <b>${escapeHtml(cName)}</b>! Let\'s make our day on <b id="celebrateDate">${d}</b> extra special. I\'ll bring the smiles; you bring <b id="celebrateActivities">${acts}</b>.`;
+
+      // WhatsApp share
+      const msg = `He said YES!\nDate: ${d}\nPlan: ${acts}`;
+      const wa = document.getElementById('whatsApp');
+      wa.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+
+      celebrate.classList.add('show');
+      startConfetti();
+    }
+
+    document.getElementById('restart').addEventListener('click', ()=>{
+      celebrate.classList.remove('show');
+      stopConfetti();
+      // Reset
+      nameInput.value=''; dateInput.value='';
+      document.getElementById('s1-next').disabled=true;
+      document.getElementById('s3-next').disabled=true;
+      document.getElementById('s4-next').disabled=true;
+      document.getElementById('s5-next').disabled=true;
+      document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      ans.name=''; ans.date=''; ans.activities=[];
+      show(0);
+    });
+
+    // ===== Effects =====
+    function pulseButton(btn){
+      btn.animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}], {duration:220});
+    }
+    function wiggle(el){
+      el.animate([{transform:'translateX(0)'},{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}],{duration:220});
+    }
+
+    function escapeHtml(str){
+      return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m]));
+    }
+
+    // ===== Confetti (no library) =====
+    let confettiCtx, confettiPieces=[], confettiRAF=null;
+    function startConfetti(){
+      const c=confettiCanvas; const dpr=Math.max(1, window.devicePixelRatio||1);
+      const resize=()=>{ c.width=innerWidth*dpr; c.height=innerHeight*dpr; c.style.width=innerWidth+'px'; c.style.height=innerHeight+'px'; confettiCtx= c.getContext('2d'); confettiCtx.scale(dpr,dpr); };
+      resize(); window.addEventListener('resize', resize);
+
+      const colors=[[255,77,109],[51,209,122],[255,209,102],[80,170,255],[191,148,255]];
+      confettiPieces = Array.from({length:160}, ()=>({
+        x: Math.random()*innerWidth,
+        y: -20 - Math.random()*innerHeight,
+        r: Math.random()*8+2,
+        c: colors[Math.floor(Math.random()*colors.length)],
+        s: Math.random()*2+1,
+        a: Math.random()*Math.PI*2
+      }));
+      const step = ()=>{
+        confettiCtx.clearRect(0,0,innerWidth,innerHeight);
+        confettiPieces.forEach(p=>{
+          p.y += p.s*2; p.x += Math.sin(p.a+=0.02)*1.2;
+          if(p.y>innerHeight+10){ p.y=-20; p.x=Math.random()*innerWidth; }
+          confettiCtx.fillStyle = `rgba(${p.c[0]},${p.c[1]},${p.c[2]},0.9)`;
+          confettiCtx.beginPath(); confettiCtx.arc(p.x,p.y,p.r,0,Math.PI*2); confettiCtx.fill();
+        });
+        confettiRAF = requestAnimationFrame(step);
+      };
+      cancelAnimationFrame(confettiRAF); step();
+    }
+
+    function stopConfetti(){
+      cancelAnimationFrame(confettiRAF); const c=confettiCanvas.getContext('2d'); c && c.clearRect(0,0,innerWidth,innerHeight);
+    }
+  </script>
+</body>
+</html>
