@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Happy Birthday My Love ❤️</title>
+  <style>
+    /* Background */
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: linear-gradient(to top right, #ffc0cb, #fff0f5);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* Card */
+    .card {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(255, 105, 180, 0.4);
+      text-align: center;
+      position: relative;
+      max-width: 600px;
+      z-index: 1;
+    }
+
+    .card h1 {
+      color: #e91e63;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    .card p {
+      font-size: 18px;
+      color: #333;
+    }
+
+    .card button {
+      margin-top: 20px;
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .card button:hover {
+      background-color: #c2185b;
+    }
+
+    #message {
+      display: none;
+      margin-top: 20px;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Sparkles and floating hearts */
+    .sparkle, .flower, .heart {
+      position: absolute;
+      pointer-events: none;
+      animation: float 10s linear infinite;
+      opacity: 0.7;
+      z-index: 0;
+    }
+
+    .sparkle::before {
+      content: "✨";
+      font-size: 24px;
+    }
+
+    .flower::before {
+      content: "🌸";
+      font-size: 22px;
+    }
+
+    .heart::before {
+      content: "💖";
+      font-size: 26px;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) translateX(0);
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-10vh) translateX(20px);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+ <!-- Main Birthday Card -->
+  <div class="card">
+    <h1>🎉 Happy Birthday, My Love💞💟 🍰🍰 🎂</h1>
+    <p id="prompt">Click the button below to reveal your surprise message 💌</p>
+    <button onclick="showMessage()">Reveal Message</button>
+    <div id="message">
+      <p>
+        MY love for you grows stronger💖 — <strong>you</strong>.  
+        <br /><br />
+        Have a greate year,be happy forever ,I want to see ur simle always...god bless u chinna🤗🤗 
+        <br /><br />
+        when ever you need me or not  i always there for u ri.💋💋
+        <br /><br />
+        Happy Birthday, my heart. I love you more than words can ever express. 💕
+      </p>
+    </div>
+  </div>
+
+  <script>
+    function showMessage() {
+      document.getElementById("prompt").style.display = "none";
+      document.querySelector('button').style.display = "none";  // Hide button after click
+      document.getElementById("message").style.display = "block";
+    }
+
+    const decorations = ['sparkle', 'flower', 'heart'];
+    for (let i = 0; i < 40; i++) {
+      const el = document.createElement('div');
+      el.className = decorations[Math.floor(Math.random() * decorations.length)];
+      el.style.left = Math.random() * 100 + "vw";
+      el.style.animationDuration = 5 + Math.random() * 10 + "s";
+      document.body.appendChild(el);
+    }
+  </script>
+</body>
+</html>
